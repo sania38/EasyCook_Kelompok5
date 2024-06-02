@@ -248,7 +248,7 @@ class _TambahScreenState extends State<TambahScreen> {
                           ),
                         ),
                         alignLabelWithHint: true,
-                        labelText: "Deskripsikan sedikit tentang maskanmu",
+                        labelText: "Deskripsikan sedikit tentang masakanmu",
                         labelStyle: TextStyle(color: Color(0xFF000000))),
                     maxLines: 4,
                     validator: (value) {
