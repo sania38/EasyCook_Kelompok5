@@ -1,4 +1,5 @@
 import 'package:easycook/screens/home_screen.dart';
+import 'package:easycook/screens/liked_screen.dart';
 import 'package:easycook/screens/tambah_screen.dart';
 import 'package:easycook/screens/profile_screen.dart';
 import 'package:easycook/screens/tampil_screen.dart';
@@ -12,6 +13,7 @@ List<Widget> _bodyItems = [
   const HomePage(),
   const TampilScreen(),
   const TambahScreen(),
+  const LikedScreen(),
   const ProfileScreen(),
 ];
 
@@ -20,6 +22,7 @@ List<BottomNavigationBarItem> _bottomNavigationBar = const [
   BottomNavigationBarItem(
       icon: Icon(Icons.receipt_long_outlined), label: "Resep"),
   BottomNavigationBarItem(icon: Icon(Icons.add), label: "Tambah"),
+  BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Disukai"),
   BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
 ];
 

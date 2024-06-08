@@ -309,4 +309,33 @@ class FirebaseService {
       throw Exception('Failed to upload profile image');
     }
   }
+
+  Future<void> updateLikesAndBookmarks(
+      String resepId, int likes, bool isBookmarked) async {
+    try {
+      await _firestore.collection('resep').doc(resepId).update({
+        'likes': likes,
+        'is_bookmarked': isBookmarked,
+      });
+    } catch (e) {
+      print('Error updating likes and bookmarks: $e');
+      throw Exception('Failed to update likes and bookmarks');
+    }
+  }
+
+  Future<Map<String, dynamic>> getLikesAndBookmarks(String resepId) async {
+    try {
+      DocumentSnapshot docSnapshot =
+          await _firestore.collection('resep').doc(resepId).get();
+      int likes = docSnapshot['likes'] ?? 0;
+      bool isBookmarked = docSnapshot['is_bookmarked'] ?? false;
+      return {
+        'likes': likes,
+        'is_bookmarked': isBookmarked,
+      };
+    } catch (e) {
+      print('Error getting likes and bookmarks: $e');
+      throw Exception('Failed to get likes and bookmarks');
+    }
+  }
 }

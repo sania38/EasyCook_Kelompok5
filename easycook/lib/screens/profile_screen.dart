@@ -295,7 +295,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           children: [
                                             Container(
                                               width: 80,
-                                              height: 80,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.1,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     const BorderRadius.all(

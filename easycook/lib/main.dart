@@ -1,5 +1,6 @@
 import 'package:easycook/screens/splash.dart';
 import 'package:easycook/state%20management/bloc/login/login_cubit.dart';
+import 'package:easycook/state%20management/provider/like_save.dart';
 import 'package:easycook/state%20management/provider/profile_pict.dart';
 import 'package:easycook/state%20management/bloc/register/register_cubit.dart';
 import 'package:easycook/state%20management/provider/simpan_resep.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => SaveRecipeProvider()),
         ChangeNotifierProvider(create: (_) => UpdateRecipeProvider()),
+        ChangeNotifierProvider(create: (_) => ResepModel()),
         BlocProvider(
           create: (context) => LoginCubit(),
         ),

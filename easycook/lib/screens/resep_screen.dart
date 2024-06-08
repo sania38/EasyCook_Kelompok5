@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easycook/services/user_auth.dart';
+import 'package:easycook/state%20management/provider/like_save.dart';
 import 'package:flutter/material.dart';
 import 'package:easycook/models/resep_model.dart';
 import 'package:easycook/services/firebase_service.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class Resep extends StatefulWidget {
   final String resepId;
@@ -28,6 +30,11 @@ class _ResepState extends State<Resep> {
 
   @override
   Widget build(BuildContext context) {
+    final resepModel = Provider.of<ResepModel>(context);
+    final likes = resepModel.likes[widget.resepId] ?? 0;
+    final isLikedByCurrentUser =
+        resepModel.isLikedByCurrentUser(widget.resepId);
+    final isBookmarked = resepModel.bookmarks[widget.resepId] ?? false;
     return Scaffold(
       body: FutureBuilder<Recipe?>(
         future: _resepFuture,
@@ -42,24 +49,43 @@ class _ResepState extends State<Resep> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30.0),
+                  Stack(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30.0),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                          child: Image.network(
+                            resep.imageURL,
+                            width: double.infinity,
+                            height: 300.0,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                       ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
+                      Positioned(
+                        top: 16.0, // Atur posisi tombol di bagian atas
+                        left: 16.0, // Atur posisi tombol di sebelah kiri
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30,
+                          ), // Ikon tombol kembali
+                          onPressed: () {
+                            Navigator.pop(
+                                context); // Fungsi untuk kembali ke halaman sebelumnya
+                          },
+                        ),
                       ),
-                      child: Image.network(
-                        resep.imageURL,
-                        width: double.infinity,
-                        height: 300.0,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                    ],
                   ),
                   const SizedBox(
                     height: 16,
@@ -71,11 +97,76 @@ class _ResepState extends State<Resep> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 resep.name,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 30),
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 2,
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 1),
+                                            blurStyle: BlurStyle.outer),
+                                      ],
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(8.0),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            isLikedByCurrentUser
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isLikedByCurrentUser
+                                                ? Colors.red
+                                                : null,
+                                          ),
+                                          onPressed: () async {
+                                            if (isLikedByCurrentUser) {
+                                              await resepModel
+                                                  .unlikeResep(widget.resepId);
+                                            } else {
+                                              await resepModel
+                                                  .likeResep(widget.resepId);
+                                            }
+                                            // Memanggil setState untuk memperbarui tampilan
+                                            setState(() {});
+                                          },
+                                        ),
+                                        Text(
+                                          '$likes ',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      isBookmarked
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_border,
+                                      color: isBookmarked
+                                          ? Colors.amber
+                                          : Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      resepModel.toggleBookmark(widget.resepId);
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
