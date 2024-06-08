@@ -8,32 +8,28 @@ class ResepModel extends ChangeNotifier {
 
   Future<void> likeResep(String resepId) async {
     try {
-      // Panggil metode untuk mendapatkan jumlah like dan status bookmark dari Firebase
       Map<String, dynamic> likesAndBookmarks =
           await FirebaseService().getLikesAndBookmarks(resepId);
       int currentLikes = likesAndBookmarks['likes'];
       bool isBookmarked = likesAndBookmarks['is_bookmarked'];
 
-      // Periksa apakah resep sudah dilike oleh pengguna saat ini
       if (likedByCurrentUser.containsKey(resepId) &&
           likedByCurrentUser[resepId]!) {
         // Jika sudah dilike, maka lakukan unlike
         likes[resepId] = (likes[resepId] ?? 0) - 1;
         likedByCurrentUser[resepId] = false;
       } else {
-        // Jika belum dilike, maka lakukan like
-        likes[resepId] = currentLikes + 1; // Tambahkan satu like
+        likes[resepId] = currentLikes + 1;
         likedByCurrentUser[resepId] = true;
       }
 
-      // Panggil metode untuk mengupdate data like di Firebase
       FirebaseService()
           .updateLikesAndBookmarks(resepId, likes[resepId]!, isBookmarked);
     } catch (e) {
       print('Error liking recipe: $e');
       throw Exception('Failed to like recipe');
     }
-    // Panggil notifyListeners() agar UI dapat diperbarui
+
     notifyListeners();
   }
 
@@ -44,18 +40,14 @@ class ResepModel extends ChangeNotifier {
 
   Future<void> unlikeResep(String resepId) async {
     try {
-      // Periksa apakah resep sudah dilike oleh pengguna saat ini
       if (likedByCurrentUser.containsKey(resepId) &&
           likedByCurrentUser[resepId]!) {
-        // Jika sudah dilike, maka lakukan unlike
         likes[resepId] = (likes[resepId] ?? 0) - 1;
         likedByCurrentUser[resepId] = false;
 
-        // Panggil metode untuk mengupdate data like di Firebase
         FirebaseService().updateLikesAndBookmarks(
             resepId, likes[resepId] ?? 0, bookmarks[resepId] ?? false);
 
-        // Panggil notifyListeners() agar UI dapat diperbarui
         notifyListeners();
       }
     } catch (e) {
