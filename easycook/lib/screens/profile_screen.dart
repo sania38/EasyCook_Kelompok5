@@ -70,14 +70,14 @@ class _ProfileScreenState extends State<ProfileScreen>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Konfirmasi Logout'),
-          content: Text('Apakah Anda yakin ingin keluar?'),
+          title: const Text('Konfirmasi Logout'),
+          content: const Text('Apakah Anda yakin ingin keluar?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
+              child: const Text(
                 'Batal',
                 style: TextStyle(
                   color: Color(0xFF58A975),
@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     (route) =>
                         false); // Navigasi ke halaman login dan hapus history navigasi
               },
-              child: Text(
+              child: const Text(
                 'Keluar',
                 style: TextStyle(
                   color: Color(0xFF58A975),
@@ -214,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
             ),
             Container(
-              height: 322,
+              height: 0,
               child: Center(
                 child: Container(
                   height: double.infinity,

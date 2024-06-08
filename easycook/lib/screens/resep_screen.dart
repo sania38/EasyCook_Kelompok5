@@ -48,17 +48,25 @@ class _ResepState extends State<Resep> {
                         Radius.circular(30.0),
                       ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
-                      ),
-                      child: Image.network(
-                        resep.imageURL,
-                        width: double.infinity,
-                        height: 300.0,
-                        fit: BoxFit.fill,
-                      ),
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                resep.imageURL,
+                                width: double.infinity,
+                                height: 300.0,
+                                fit: BoxFit.fill,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(
