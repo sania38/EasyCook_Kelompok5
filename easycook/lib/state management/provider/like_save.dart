@@ -6,6 +6,17 @@ class ResepModel extends ChangeNotifier {
   Map<String, bool> likedByCurrentUser = {};
   Map<String, bool> bookmarks = {};
 
+  void initData(String resepId) async {
+    try {
+      final likesAndBookmarks =
+          await FirebaseService().getLikesAndBookmarks(resepId);
+      likes[resepId] = likesAndBookmarks['likes'] ?? 0;
+      notifyListeners();
+    } catch (e) {
+      print('Error initializing data: $e');
+    }
+  }
+
   Future<void> likeResep(String resepId) async {
     try {
       Map<String, dynamic> likesAndBookmarks =

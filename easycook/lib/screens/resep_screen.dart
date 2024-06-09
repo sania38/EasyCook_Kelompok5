@@ -18,11 +18,29 @@ class Resep extends StatefulWidget {
 
 class _ResepState extends State<Resep> {
   late Future<Recipe?> _resepFuture;
+  int likes = 0;
+  late ResepModel _resepModel;
 
+  @override
   @override
   void initState() {
     super.initState();
     _resepFuture = FirebaseService().ambilResepId(widget.resepId);
+    _resepModel = Provider.of<ResepModel>(context, listen: false);
+    _resepModel.initData(widget.resepId);
+  }
+
+  Future<void> loadLikes() async {
+    try {
+      // Load likes from Firebase
+      Map<String, dynamic> likesAndBookmarks =
+          await FirebaseService().getLikesAndBookmarks(widget.resepId);
+      setState(() {
+        likes = likesAndBookmarks['likes'] ?? 0;
+      });
+    } catch (e) {
+      print('Error loading likes: $e');
+    }
   }
 
   final UserRepository _userRepository =
@@ -35,6 +53,7 @@ class _ResepState extends State<Resep> {
     final isLikedByCurrentUser =
         resepModel.isLikedByCurrentUser(widget.resepId);
     final isBookmarked = resepModel.bookmarks[widget.resepId] ?? false;
+
     return Scaffold(
       body: FutureBuilder<Recipe?>(
         future: _resepFuture,

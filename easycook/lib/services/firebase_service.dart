@@ -327,8 +327,44 @@ class FirebaseService {
     try {
       DocumentSnapshot docSnapshot =
           await _firestore.collection('resep').doc(resepId).get();
-      int likes = docSnapshot['likes'] ?? 0;
-      bool isBookmarked = docSnapshot['is_bookmarked'] ?? false;
+
+      if (!docSnapshot.exists) {
+        await _firestore.collection('resep').doc(resepId).set({
+          'likes': 0,
+          'is_bookmarked': false,
+        });
+      } else {
+        Map<String, dynamic>? data =
+            docSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          if (!data.containsKey('likes')) {
+            await _firestore
+                .collection('resep')
+                .doc(resepId)
+                .update({'likes': 0});
+          }
+          if (!data.containsKey('is_bookmarked')) {
+            await _firestore
+                .collection('resep')
+                .doc(resepId)
+                .update({'is_bookmarked': false});
+          }
+        } else {
+          // Jika data null, tambahkan fields yang diperlukan
+          await _firestore.collection('resep').doc(resepId).update({
+            'likes': 0,
+            'is_bookmarked': false,
+          });
+        }
+      }
+
+      // Get the updated document
+      docSnapshot = await _firestore.collection('resep').doc(resepId).get();
+      int likes = (docSnapshot.data() as Map<String, dynamic>?)?['likes'] ?? 0;
+      bool isBookmarked =
+          (docSnapshot.data() as Map<String, dynamic>?)?['is_bookmarked'] ??
+              false;
+
       return {
         'likes': likes,
         'is_bookmarked': isBookmarked,
