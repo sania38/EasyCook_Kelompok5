@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:easycook/services/user_auth.dart';
 import 'package:easycook/state%20management/provider/like_save.dart';
+
 import 'package:flutter/material.dart';
 import 'package:easycook/models/resep_model.dart';
 import 'package:easycook/services/firebase_service.dart';
-import 'package:flutter/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:provider/provider.dart';
 
 class Resep extends StatefulWidget {
@@ -50,9 +52,6 @@ class _ResepState extends State<Resep> {
   Widget build(BuildContext context) {
     final resepModel = Provider.of<ResepModel>(context);
     final likes = resepModel.likes[widget.resepId] ?? 0;
-    final isLikedByCurrentUser =
-        resepModel.isLikedByCurrentUser(widget.resepId);
-    final isBookmarked = resepModel.bookmarks[widget.resepId] ?? false;
 
     return Scaffold(
       body: FutureBuilder<Recipe?>(
@@ -143,23 +142,33 @@ class _ResepState extends State<Resep> {
                                       children: [
                                         IconButton(
                                           icon: Icon(
-                                            isLikedByCurrentUser
+                                            resepModel.isLikedByCurrentUser(
+                                                    widget.resepId)
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
-                                            color: isLikedByCurrentUser
-                                                ? Colors.red
-                                                : null,
+                                            color:
+                                                resepModel.isLikedByCurrentUser(
+                                                        widget.resepId)
+                                                    ? Colors.red
+                                                    : Colors.black,
                                           ),
                                           onPressed: () async {
-                                            if (isLikedByCurrentUser) {
-                                              await resepModel
-                                                  .unlikeResep(widget.resepId);
+                                            String? userId =
+                                                await getUserId(); // Obtain the userId somehow
+                                            if (userId != null) {
+                                              if (resepModel
+                                                  .isLikedByCurrentUser(
+                                                      widget.resepId)) {
+                                                await resepModel.unlikeResep(
+                                                    widget.resepId, userId);
+                                              } else {
+                                                await resepModel.likeResep(
+                                                    widget.resepId, userId);
+                                              }
+                                              setState(() {});
                                             } else {
-                                              await resepModel
-                                                  .likeResep(widget.resepId);
+                                              // Handle the case where userId is null
                                             }
-                                            // Memanggil setState untuk memperbarui tampilan
-                                            setState(() {});
                                           },
                                         ),
                                         Text(
@@ -172,19 +181,19 @@ class _ResepState extends State<Resep> {
                                       ],
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: Icon(
-                                      isBookmarked
-                                          ? Icons.bookmark
-                                          : Icons.bookmark_border,
-                                      color: isBookmarked
-                                          ? Colors.amber
-                                          : Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      resepModel.toggleBookmark(widget.resepId);
-                                    },
-                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(
+                                  //     isBookmarked
+                                  //         ? Icons.bookmark
+                                  //         : Icons.bookmark_border,
+                                  //     color: isBookmarked
+                                  //         ? Colors.amber
+                                  //         : Colors.black,
+                                  //   ),
+                                  //   onPressed: () {
+                                  //     resepModel.toggleBookmark(widget.resepId);
+                                  //   },
+                                  // ),
                                 ],
                               ),
                             ],
@@ -413,5 +422,19 @@ class _ResepState extends State<Resep> {
         },
       ),
     );
+  }
+
+  Future<String?> getUserId() async {
+    // Cek apakah ada pengguna yang sedang login
+    FirebaseAuth.User? user = FirebaseAuth.FirebaseAuth.instance.currentUser;
+    // Use 'FirebaseAuth.User' to refer to the User class from 'firebase_auth' library
+
+    // If there's a logged-in user, return the user's ID
+    if (user != null) {
+      return user.uid;
+    } else {
+      // If no user is logged in, return null
+      return null;
+    }
   }
 }

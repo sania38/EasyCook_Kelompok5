@@ -310,12 +310,14 @@ class FirebaseService {
     }
   }
 
-  Future<void> updateLikesAndBookmarks(
-      String resepId, int likes, bool isBookmarked) async {
+  Future<void> updateLikesAndBookmarks(String resepId, int likes,
+      bool isBookmarked, List<String> likedUserIds) async {
     try {
       await _firestore.collection('resep').doc(resepId).update({
         'likes': likes,
         'is_bookmarked': isBookmarked,
+        // Update the 'liked_user_ids' field with the likedUserIds list
+        'liked_user_ids': likedUserIds,
       });
     } catch (e) {
       print('Error updating likes and bookmarks: $e');
@@ -332,6 +334,8 @@ class FirebaseService {
         await _firestore.collection('resep').doc(resepId).set({
           'likes': 0,
           'is_bookmarked': false,
+          'liked_user_ids':
+              [], // Tambahkan field baru untuk menyimpan ID pengguna yang melakukan like
         });
       } else {
         Map<String, dynamic>? data =
@@ -349,11 +353,18 @@ class FirebaseService {
                 .doc(resepId)
                 .update({'is_bookmarked': false});
           }
+          if (!data.containsKey('liked_user_ids')) {
+            await _firestore
+                .collection('resep')
+                .doc(resepId)
+                .update({'liked_user_ids': []});
+          }
         } else {
           // Jika data null, tambahkan fields yang diperlukan
           await _firestore.collection('resep').doc(resepId).update({
             'likes': 0,
             'is_bookmarked': false,
+            'liked_user_ids': [],
           });
         }
       }
@@ -364,10 +375,14 @@ class FirebaseService {
       bool isBookmarked =
           (docSnapshot.data() as Map<String, dynamic>?)?['is_bookmarked'] ??
               false;
+      List<String> likedUserIds = List<String>.from(
+          (docSnapshot.data() as Map<String, dynamic>?)?['liked_user_ids'] ??
+              []);
 
       return {
         'likes': likes,
         'is_bookmarked': isBookmarked,
+        'liked_user_ids': likedUserIds,
       };
     } catch (e) {
       print('Error getting likes and bookmarks: $e');

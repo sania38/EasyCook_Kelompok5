@@ -1,84 +1,84 @@
 import 'package:easycook/services/firebase_service.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 
 class ResepModel extends ChangeNotifier {
   Map<String, int> likes = {};
   Map<String, bool> likedByCurrentUser = {};
-  Map<String, bool> bookmarks = {};
 
-  void initData(String resepId) async {
+  Future<void> initData(String resepId) async {
     try {
       final likesAndBookmarks =
           await FirebaseService().getLikesAndBookmarks(resepId);
       likes[resepId] = likesAndBookmarks['likes'] ?? 0;
+
+      String? userId = await getUserId();
+      if (userId != null) {
+        List<String> likedUserIds =
+            List<String>.from(likesAndBookmarks['liked_user_ids'] ?? []);
+        likedByCurrentUser[resepId] = likedUserIds.contains(userId);
+      } else {
+        likedByCurrentUser[resepId] = false;
+      }
+
       notifyListeners();
     } catch (e) {
       print('Error initializing data: $e');
     }
   }
 
-  Future<void> likeResep(String resepId) async {
+  Future<String?> getUserId() async {
+    FirebaseAuth.User? user = FirebaseAuth.FirebaseAuth.instance.currentUser;
+    return user?.uid;
+  }
+
+  Future<void> likeResep(String resepId, String userId) async {
     try {
       Map<String, dynamic> likesAndBookmarks =
           await FirebaseService().getLikesAndBookmarks(resepId);
-      int currentLikes = likesAndBookmarks['likes'];
-      bool isBookmarked = likesAndBookmarks['is_bookmarked'];
+      int currentLikes = likesAndBookmarks['likes'] ?? 0;
+      List<String> likedUserIds =
+          List<String>.from(likesAndBookmarks['liked_user_ids'] ?? []);
 
-      if (likedByCurrentUser.containsKey(resepId) &&
-          likedByCurrentUser[resepId]!) {
-        // Jika sudah dilike, maka lakukan unlike
-        likes[resepId] = (likes[resepId] ?? 0) - 1;
-        likedByCurrentUser[resepId] = false;
-      } else {
+      if (!likedUserIds.contains(userId)) {
         likes[resepId] = currentLikes + 1;
+        likedUserIds.add(userId);
         likedByCurrentUser[resepId] = true;
       }
 
-      FirebaseService()
-          .updateLikesAndBookmarks(resepId, likes[resepId]!, isBookmarked);
+      await FirebaseService().updateLikesAndBookmarks(resepId, likes[resepId]!,
+          likedUserIds.contains(userId), likedUserIds);
+      notifyListeners();
     } catch (e) {
       print('Error liking recipe: $e');
       throw Exception('Failed to like recipe');
     }
-
-    notifyListeners();
   }
 
-  bool isLikedByCurrentUser(String resepId) {
-    return likedByCurrentUser.containsKey(resepId) &&
-        likedByCurrentUser[resepId]!;
-  }
-
-  Future<void> unlikeResep(String resepId) async {
+  Future<void> unlikeResep(String resepId, String userId) async {
     try {
-      if (likedByCurrentUser.containsKey(resepId) &&
-          likedByCurrentUser[resepId]!) {
-        likes[resepId] = (likes[resepId] ?? 0) - 1;
+      Map<String, dynamic> likesAndBookmarks =
+          await FirebaseService().getLikesAndBookmarks(resepId);
+      int currentLikes = likesAndBookmarks['likes'] ?? 0;
+      List<String> likedUserIds =
+          List<String>.from(likesAndBookmarks['liked_user_ids'] ?? []);
+
+      if (likedUserIds.contains(userId)) {
+        likes[resepId] = currentLikes - 1;
+        likedUserIds.remove(userId);
         likedByCurrentUser[resepId] = false;
-
-        FirebaseService().updateLikesAndBookmarks(
-            resepId, likes[resepId] ?? 0, bookmarks[resepId] ?? false);
-
-        notifyListeners();
       }
+
+      await FirebaseService().updateLikesAndBookmarks(resepId, likes[resepId]!,
+          likedUserIds.contains(userId), likedUserIds);
+      notifyListeners();
     } catch (e) {
       print('Error unliking recipe: $e');
       throw Exception('Failed to unlike recipe');
     }
   }
 
-  void toggleBookmark(String resepId) {
-    if (bookmarks.containsKey(resepId)) {
-      bookmarks[resepId] = !bookmarks[resepId]!;
-    } else {
-      bookmarks[resepId] = true;
-    }
-    notifyListeners();
-    FirebaseService().updateLikesAndBookmarks(
-        resepId, likes[resepId] ?? 0, bookmarks[resepId] ?? false);
-  }
-
-  bool isLiked(String resepId) {
-    return likes.containsKey(resepId) && likes[resepId]! > 0;
+  bool isLikedByCurrentUser(String resepId) {
+    return likedByCurrentUser[resepId] ?? false;
   }
 }
