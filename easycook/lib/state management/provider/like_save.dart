@@ -44,6 +44,10 @@ class ResepModel extends ChangeNotifier {
         likes[resepId] = currentLikes + 1;
         likedUserIds.add(userId);
         likedByCurrentUser[resepId] = true;
+
+        // Add logic to update liked recipes collection in Firebase
+        await FirebaseService().addLikedRecipe(resepId,
+            userId); // Method to add liked recipe in Firebase users collection
       }
 
       await FirebaseService().updateLikesAndBookmarks(resepId, likes[resepId]!,
@@ -67,6 +71,10 @@ class ResepModel extends ChangeNotifier {
         likes[resepId] = currentLikes - 1;
         likedUserIds.remove(userId);
         likedByCurrentUser[resepId] = false;
+
+        // Add logic to remove liked recipe from collection in Firebase
+        await FirebaseService().removeLikedRecipe(resepId,
+            userId); // Method to remove liked recipe from Firebase users collection
       }
 
       await FirebaseService().updateLikesAndBookmarks(resepId, likes[resepId]!,

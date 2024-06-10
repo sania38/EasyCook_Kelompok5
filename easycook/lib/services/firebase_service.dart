@@ -389,4 +389,34 @@ class FirebaseService {
       throw Exception('Failed to get likes and bookmarks');
     }
   }
+
+  Future<void> addLikedRecipe(String resepId, String userId) async {
+    try {
+      // Get reference to the user document
+      DocumentReference userDocRef = _firestore.collection('users').doc(userId);
+
+      // Update liked recipes field in user document
+      await userDocRef.set({
+        'liked_recipes': FieldValue.arrayUnion([resepId]),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('Error adding liked recipe: $e');
+      throw Exception('Failed to add liked recipe');
+    }
+  }
+
+  Future<void> removeLikedRecipe(String resepId, String userId) async {
+    try {
+      // Get reference to the user document
+      DocumentReference userDocRef = _firestore.collection('users').doc(userId);
+
+      // Update liked recipes field in user document to remove the liked recipe
+      await userDocRef.update({
+        'liked_recipes': FieldValue.arrayRemove([resepId]),
+      });
+    } catch (e) {
+      print('Error removing liked recipe: $e');
+      throw Exception('Failed to remove liked recipe');
+    }
+  }
 }
