@@ -419,4 +419,52 @@ class FirebaseService {
       throw Exception('Failed to remove liked recipe');
     }
   }
+
+  Future<List<Recipe>> ambilResepDisukai(String userId) async {
+    try {
+      // Get the user's document
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        // Get the list of liked recipe IDs
+        List<String> likedRecipeIds =
+            List<String>.from(userDoc['liked_recipes'] ?? []);
+
+        // If there are no liked recipes, return an empty list
+        if (likedRecipeIds.isEmpty) {
+          return [];
+        }
+
+        // Get the liked recipes from the 'resep' collection
+        QuerySnapshot querySnapshot = await _firestore
+            .collection('resep')
+            .where(FieldPath.documentId, whereIn: likedRecipeIds)
+            .get();
+
+        // Map the documents to Recipe objects
+        List<Recipe> likedRecipes = querySnapshot.docs.map((doc) {
+          return Recipe(
+            id: doc.id,
+            name: doc['nama_masakan'],
+            description: doc['deskripsi'],
+            ingredients: List<String>.from(doc['bahan']),
+            cookingSteps: List<String>.from(doc['cara_memasak']),
+            imageURL: doc['foto_url'],
+            userId: doc['user_id'],
+            createdAt: (doc['created_at'] as Timestamp).toDate(),
+            profileName: '',
+          );
+        }).toList();
+
+        return likedRecipes;
+      } else {
+        // If the user document does not exist, return an empty list
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching liked recipes: $e');
+      throw Exception('Failed to fetch liked recipes');
+    }
+  }
 }
