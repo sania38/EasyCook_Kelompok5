@@ -79,22 +79,20 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
-                            backgroundImage: Provider.of<
-                                            ProfilePictureUrlProvider>(context)
-                                        .profilePictureUrl !=
-                                    null
-                                ? NetworkImage(
-                                        Provider.of<ProfilePictureUrlProvider>(
-                                                context)
+                            backgroundImage:
+                                Provider.of<ProfilePictureUrlProvider>(context)
+                                            .profilePictureUrl !=
+                                        null
+                                    ? NetworkImage(Provider
+                                                .of<ProfilePictureUrlProvider>(
+                                                    context)
                                             .profilePictureUrl!)
-                                    as ImageProvider<Object>
-                                : const AssetImage(
-                                    'assets/exProf.jpg'), // Use a placeholder if _profilePictureUrl is null
+                                        as ImageProvider<Object>
+                                    : const AssetImage('assets/exProf.jpg'),
                             radius: 25,
                           ),
                           FutureBuilder<String>(
-                            future: _firebaseService
-                                .getUserName(), // Future to fetch user's name
+                            future: _firebaseService.getUserName(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
