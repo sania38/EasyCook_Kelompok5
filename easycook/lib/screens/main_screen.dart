@@ -11,9 +11,13 @@ import '../state management/bloc/bottom_nav/bottom_nav_bloc.dart';
 
 List<Widget> _bodyItems = [
   const HomePage(),
-  const TampilScreen(),
+  const TampilScreen(
+    resepId: '',
+  ),
   const TambahScreen(),
-  const LikedScreen(),
+  const LikedScreen(
+    resepId: '',
+  ),
   const ProfileScreen(),
 ];
 

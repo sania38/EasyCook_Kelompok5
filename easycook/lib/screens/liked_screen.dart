@@ -1,10 +1,13 @@
+import 'package:easycook/screens/resep_screen.dart';
+import 'package:easycook/screens/tampil_screen.dart';
 import 'package:easycook/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:easycook/models/resep_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 
 class LikedScreen extends StatelessWidget {
-  const LikedScreen({Key? key}) : super(key: key);
+  final String resepId;
+  const LikedScreen({Key? key, required this.resepId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +29,16 @@ class LikedScreen extends StatelessWidget {
         toolbarHeight: 70,
       ),
       body: userId == null
-          ? Center(child: Text('User not logged in'))
+          ? const Center(child: Text('User not logged in'))
           : FutureBuilder<List<Recipe>>(
               future: firebaseService.ambilResepDisukai(userId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No liked recipes found'));
+                  return const Center(child: Text('No liked recipes found'));
                 }
 
                 final likedRecipes = snapshot.data!;
@@ -47,7 +50,13 @@ class LikedScreen extends StatelessWidget {
                       children: likedRecipes.map((recipe) {
                         return GestureDetector(
                           onTap: () {
-                            // Tambahkan logika untuk menavigasi ke halaman resep di sini
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    Resep(resepId: recipe.id), // Corrected here
+                              ),
+                            );
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -104,7 +113,7 @@ class LikedScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                Column(
+                                const Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     // Tambahkan ikon untuk mengedit atau menghapus resep jika diperlukan

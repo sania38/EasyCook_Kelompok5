@@ -7,7 +7,7 @@ import 'package:easycook/models/resep_model.dart';
 import 'package:easycook/services/firebase_service.dart';
 
 class TampilScreen extends StatefulWidget {
-  const TampilScreen({Key? key}) : super(key: key);
+  const TampilScreen({Key? key, required String resepId}) : super(key: key);
 
   @override
   _TampilScreenState createState() => _TampilScreenState();
