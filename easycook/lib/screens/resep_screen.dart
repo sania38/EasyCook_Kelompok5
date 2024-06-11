@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:easycook/services/user_auth.dart';
+import 'package:easycook/state%20management/provider/like_save.dart';
+
 import 'package:flutter/material.dart';
 import 'package:easycook/models/resep_model.dart';
 import 'package:easycook/services/firebase_service.dart';
-import 'package:flutter/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
+import 'package:provider/provider.dart';
 
 class Resep extends StatefulWidget {
   final String resepId;
@@ -16,11 +20,29 @@ class Resep extends StatefulWidget {
 
 class _ResepState extends State<Resep> {
   late Future<Recipe?> _resepFuture;
+  int likes = 0;
+  late ResepModel _resepModel;
 
+  @override
   @override
   void initState() {
     super.initState();
     _resepFuture = FirebaseService().ambilResepId(widget.resepId);
+    _resepModel = Provider.of<ResepModel>(context, listen: false);
+    _resepModel.initData(widget.resepId);
+  }
+
+  Future<void> loadLikes() async {
+    try {
+      // Load likes from Firebase
+      Map<String, dynamic> likesAndBookmarks =
+          await FirebaseService().getLikesAndBookmarks(widget.resepId);
+      setState(() {
+        likes = likesAndBookmarks['likes'] ?? 0;
+      });
+    } catch (e) {
+      print('Error loading likes: $e');
+    }
   }
 
   final UserRepository _userRepository =
@@ -28,6 +50,9 @@ class _ResepState extends State<Resep> {
 
   @override
   Widget build(BuildContext context) {
+    final resepModel = Provider.of<ResepModel>(context);
+    final likes = resepModel.likes[widget.resepId] ?? 0;
+
     return Scaffold(
       body: FutureBuilder<Recipe?>(
         future: _resepFuture,
@@ -42,32 +67,43 @@ class _ResepState extends State<Resep> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30.0),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        ClipRRect(
+                  Stack(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30.0),
+                          ),
+                        ),
+                        child: ClipRRect(
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(30),
                             bottomRight: Radius.circular(30),
                           ),
-                          child: Column(
-                            children: [
-                              Image.network(
-                                resep.imageURL,
-                                width: double.infinity,
-                                height: 300.0,
-                                fit: BoxFit.fill,
-                              ),
-                            ],
+                          child: Image.network(
+                            resep.imageURL,
+                            width: double.infinity,
+                            height: 300.0,
+                            fit: BoxFit.fill,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Positioned(
+                        top: 16.0, // Atur posisi tombol di bagian atas
+                        left: 16.0, // Atur posisi tombol di sebelah kiri
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30,
+                          ), // Ikon tombol kembali
+                          onPressed: () {
+                            Navigator.pop(
+                                context); // Fungsi untuk kembali ke halaman sebelumnya
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 16,
@@ -79,11 +115,86 @@ class _ResepState extends State<Resep> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 resep.name,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 30),
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 2,
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 1),
+                                            blurStyle: BlurStyle.outer),
+                                      ],
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(8.0),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            resepModel.isLikedByCurrentUser(
+                                                    widget.resepId)
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color:
+                                                resepModel.isLikedByCurrentUser(
+                                                        widget.resepId)
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                          ),
+                                          onPressed: () async {
+                                            String? userId =
+                                                await getUserId(); // Obtain the userId somehow
+                                            if (userId != null) {
+                                              if (resepModel
+                                                  .isLikedByCurrentUser(
+                                                      widget.resepId)) {
+                                                await resepModel.unlikeResep(
+                                                    widget.resepId, userId);
+                                              } else {
+                                                await resepModel.likeResep(
+                                                    widget.resepId, userId);
+                                              }
+                                              setState(() {});
+                                            } else {
+                                              // Handle the case where userId is null
+                                            }
+                                          },
+                                        ),
+                                        Text(
+                                          '$likes ',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(
+                                  //     isBookmarked
+                                  //         ? Icons.bookmark
+                                  //         : Icons.bookmark_border,
+                                  //     color: isBookmarked
+                                  //         ? Colors.amber
+                                  //         : Colors.black,
+                                  //   ),
+                                  //   onPressed: () {
+                                  //     resepModel.toggleBookmark(widget.resepId);
+                                  //   },
+                                  // ),
+                                ],
                               ),
                             ],
                           ),
@@ -311,5 +422,19 @@ class _ResepState extends State<Resep> {
         },
       ),
     );
+  }
+
+  Future<String?> getUserId() async {
+    // Cek apakah ada pengguna yang sedang login
+    FirebaseAuth.User? user = FirebaseAuth.FirebaseAuth.instance.currentUser;
+    // Use 'FirebaseAuth.User' to refer to the User class from 'firebase_auth' library
+
+    // If there's a logged-in user, return the user's ID
+    if (user != null) {
+      return user.uid;
+    } else {
+      // If no user is logged in, return null
+      return null;
+    }
   }
 }
