@@ -30,7 +30,6 @@ class _AiChatState extends State<AiChat> {
 
       _controller.clear();
 
-      // Menambahkan pesan rekomendasi di bawah pesan pengguna
       _getRecommendations();
     }
   }
