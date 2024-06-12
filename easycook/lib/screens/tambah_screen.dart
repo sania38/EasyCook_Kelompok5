@@ -97,6 +97,7 @@ class _TambahScreenState extends State<TambahScreen> {
               const Center(
                 child: CircularProgressIndicator(),
               ),
+            //pilih dan tampil gambar
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -202,6 +203,7 @@ class _TambahScreenState extends State<TambahScreen> {
                   const SizedBox(
                     height: 12,
                   ),
+                  //Nama masakan
                   TextFormField(
                     controller: foodcController,
                     decoration: const InputDecoration(
@@ -223,6 +225,7 @@ class _TambahScreenState extends State<TambahScreen> {
                   const SizedBox(
                     height: 30,
                   ),
+                  //Menambahkan deskipisi
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -268,6 +271,7 @@ class _TambahScreenState extends State<TambahScreen> {
               color: Color(0xFFFFFF99),
               thickness: 20,
             ),
+            //Menambahkan bahan bahan
             Column(
               children: [
                 Padding(
@@ -289,7 +293,7 @@ class _TambahScreenState extends State<TambahScreen> {
                       const SizedBox(
                         height: 12,
                       ),
-                      // Daftar bahan
+                      // Menampilkan daftar bahan bahan
                       ListView.builder(
                         shrinkWrap: true,
                         itemCount: ingredients.length,
@@ -389,6 +393,7 @@ class _TambahScreenState extends State<TambahScreen> {
                       const SizedBox(
                         height: 12,
                       ),
+                      //Menambahkan bahan kealam list
                       Column(
                         children: [
                           TextFormField(
@@ -468,6 +473,7 @@ class _TambahScreenState extends State<TambahScreen> {
             const SizedBox(
               height: 30,
             ),
+            //Cara memasak
             Column(
               children: [
                 Padding(
@@ -585,6 +591,7 @@ class _TambahScreenState extends State<TambahScreen> {
                       const SizedBox(
                         height: 12,
                       ),
+                      //menambahkan cara memasak
                       Column(
                         children: [
                           TextFormField(
@@ -674,7 +681,7 @@ class _TambahScreenState extends State<TambahScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Periksa apakah nilai controller tidak kosong
+                    // Periksa apakah nilai controller tidak kosong(Buat Update)
                     if (foodcController.text.isNotEmpty &&
                         descController.text.isNotEmpty &&
                         ingredients.isNotEmpty &&
@@ -699,6 +706,7 @@ class _TambahScreenState extends State<TambahScreen> {
                         } else {
                           print("User belum login.");
                         }
+                        //Buat save
                       } else {
                         Provider.of<SaveRecipeProvider>(context, listen: false)
                             .simpanResep(

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:easycook/env/constants/open_ai.dart';
 import 'package:easycook/models/open_ai.dart';
 import 'package:easycook/models/usage.dart';
@@ -29,7 +28,7 @@ class RecommendationService {
         "model": "gpt-3.5-turbo",
         "messages": [
           {"role": "system", "content": "You are a cooking expert."},
-          {"role": "system", "content": input},
+          {"role": "user", "content": input},
         ],
         "max_tokens": 200,
       });
@@ -37,9 +36,13 @@ class RecommendationService {
       var response = await http.post(url, headers: headers, body: data);
       if (response.statusCode == 200) {
         gptData = gptDataFromJson(response.body);
+      } else {
+        throw Exception(
+            'Failed to get response: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
-      throw Exception('Error occurred when sending request.');
+      print('Error: $e'); // Print the error to console for debugging
+      throw Exception('Error occurred when sending request: $e');
     }
 
     return gptData;

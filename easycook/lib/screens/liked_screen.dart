@@ -113,12 +113,6 @@ class LikedScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                const Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    // Tambahkan ikon untuk mengedit atau menghapus resep jika diperlukan
-                                  ],
-                                ),
                               ],
                             ),
                           ),

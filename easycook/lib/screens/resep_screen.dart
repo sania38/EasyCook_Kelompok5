@@ -89,17 +89,16 @@ class _ResepState extends State<Resep> {
                         ),
                       ),
                       Positioned(
-                        top: 16.0, // Atur posisi tombol di bagian atas
-                        left: 16.0, // Atur posisi tombol di sebelah kiri
+                        top: 16.0,
+                        left: 16.0,
                         child: IconButton(
                           icon: const Icon(
                             Icons.arrow_back,
                             color: Colors.white,
                             size: 30,
-                          ), // Ikon tombol kembali
+                          ),
                           onPressed: () {
-                            Navigator.pop(
-                                context); // Fungsi untuk kembali ke halaman sebelumnya
+                            Navigator.pop(context);
                           },
                         ),
                       ),
@@ -154,7 +153,7 @@ class _ResepState extends State<Resep> {
                                           ),
                                           onPressed: () async {
                                             String? userId =
-                                                await getUserId(); // Obtain the userId somehow
+                                                await getUserId(); // Obtain the userId
                                             if (userId != null) {
                                               if (resepModel
                                                   .isLikedByCurrentUser(
@@ -166,8 +165,6 @@ class _ResepState extends State<Resep> {
                                                     widget.resepId, userId);
                                               }
                                               setState(() {});
-                                            } else {
-                                              // Handle the case where userId is null
                                             }
                                           },
                                         ),
@@ -181,19 +178,6 @@ class _ResepState extends State<Resep> {
                                       ],
                                     ),
                                   ),
-                                  // IconButton(
-                                  //   icon: Icon(
-                                  //     isBookmarked
-                                  //         ? Icons.bookmark
-                                  //         : Icons.bookmark_border,
-                                  //     color: isBookmarked
-                                  //         ? Colors.amber
-                                  //         : Colors.black,
-                                  //   ),
-                                  //   onPressed: () {
-                                  //     resepModel.toggleBookmark(widget.resepId);
-                                  //   },
-                                  // ),
                                 ],
                               ),
                             ],
@@ -225,6 +209,7 @@ class _ResepState extends State<Resep> {
                               ),
                             ],
                           ),
+                          //pemublikasi
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
@@ -256,6 +241,7 @@ class _ResepState extends State<Resep> {
                                       const SizedBox(
                                         height: 8,
                                       ),
+                                      //Menghitung total resep pemublikasi
                                       FutureBuilder<int>(
                                         future: FirebaseService()
                                             .countResepByUser(resep.userId),
@@ -286,6 +272,7 @@ class _ResepState extends State<Resep> {
                             ),
                           ),
                           const SizedBox(height: 14),
+                          //menampilkan bahan bahan
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 14),
                             child: Column(
@@ -323,18 +310,40 @@ class _ResepState extends State<Resep> {
                                     itemBuilder: (context, index) {
                                       final ingredient =
                                           resep.ingredients[index];
-                                      return Text(
-                                        ingredient,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          height: 2,
-                                        ),
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            '\u2022',
+                                            style: TextStyle(fontSize: 24),
+                                          ),
+                                          const SizedBox(width: 8.0),
+                                          Expanded(
+                                            child: ListBody(
+                                              children: [
+                                                Text(
+                                                  ingredient,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w400,
+                                                    height: 2,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 12,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       );
                                     },
                                   ),
                                 ),
                                 const SizedBox(height: 24),
+                                //menampilkan langkah memasak
                                 const Text(
                                   "Cara memasak",
                                   style: TextStyle(

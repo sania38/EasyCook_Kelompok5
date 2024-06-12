@@ -147,25 +147,22 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                        height: 20), // Adding space between search bar and card
+                    const SizedBox(height: 20),
                     SizedBox(
-                      height: 200, // Set the height of the banner
+                      height: 200,
                       child: SizedBox(
-                        height: 200, // Set the height of the banner
+                        height: 200,
                         child: CarouselSlider(
                           options: CarouselOptions(
-                            autoPlay: true, // Set auto play to true
-                            aspectRatio:
-                                2.0, // Set the aspect ratio of the banner items
-                            enlargeCenterPage: true, // Enlarge center item
+                            autoPlay: true,
+                            aspectRatio: 2.0,
+                            enlargeCenterPage: true,
                           ),
                           items: [
-                            // Add your banner items here
+                            // Banner items
                             Container(
-                              width: 300, // Set the width of each banner item
-                              margin: const EdgeInsets.only(
-                                  right: 10), // Add margin between items
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(12.0),
@@ -187,9 +184,8 @@ class _HomePageState extends State<HomePage> {
                                   Radius.circular(12.0),
                                 ),
                               ),
-                              width: 300, // Set the width of each banner item
-                              margin: const EdgeInsets.only(
-                                  right: 10), // Add margin between items
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
                                 child: Image.asset(
@@ -206,9 +202,8 @@ class _HomePageState extends State<HomePage> {
                                   Radius.circular(12.0),
                                 ),
                               ),
-                              width: 300, // Set the width of each banner item
-                              margin: const EdgeInsets.only(
-                                  right: 10), // Add margin between items
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
                                 child: Image.asset(
@@ -226,6 +221,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 20,
                     ),
+                    //Header Resep Terbaru
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Row(
@@ -252,6 +248,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
+                    //Resep Terbaru
                     FutureBuilder<List<Recipe>>(
                       future: _resepFuture,
                       builder: (context, snapshot) {

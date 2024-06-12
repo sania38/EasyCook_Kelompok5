@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:easycook/services/recomendation_service.dart';
+import 'package:flutter/material.dart';
 
 class AiChat extends StatefulWidget {
   const AiChat({Key? key}) : super(key: key);
@@ -30,15 +30,14 @@ class _AiChatState extends State<AiChat> {
 
       _controller.clear();
 
-      _getRecommendations();
+      _getRecommendations(
+          _messages.last.text); // Pass the user input to the function
     }
   }
 
-  void _getRecommendations() async {
+  void _getRecommendations(String input) async {
     try {
-      final result = await RecommendationService.getLunchRecommendation(
-        _messages.last.text,
-      );
+      final result = await RecommendationService.getLunchRecommendation(input);
 
       if (mounted) {
         setState(() {
@@ -103,7 +102,7 @@ class _AiChatState extends State<AiChat> {
                     controller: _controller,
                     maxLines: null,
                     decoration: const InputDecoration(
-                      hintText: 'cari rekomendasi masakan dengen AI',
+                      hintText: 'cari rekomendasi masakan dengan AI',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(12.0),
@@ -113,10 +112,7 @@ class _AiChatState extends State<AiChat> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    _sendMessage();
-                    _getRecommendations();
-                  },
+                  onPressed: _sendMessage,
                   icon: const Icon(Icons.send),
                 ),
               ],
