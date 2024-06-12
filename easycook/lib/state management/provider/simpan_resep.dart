@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:easycook/screens/main_screen.dart';
-import 'package:easycook/screens/resep_screen.dart';
-import 'package:easycook/screens/tampil_screen.dart';
 import 'package:easycook/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
