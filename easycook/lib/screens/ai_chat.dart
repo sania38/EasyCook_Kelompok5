@@ -103,7 +103,7 @@ class _AiChatState extends State<AiChat> {
                     controller: _controller,
                     maxLines: null,
                     decoration: const InputDecoration(
-                      hintText: 'cari rekomendasi masakan dengen AI',
+                      hintText: 'Cari Rekomendasi Masakan dengan AI',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(12.0),
