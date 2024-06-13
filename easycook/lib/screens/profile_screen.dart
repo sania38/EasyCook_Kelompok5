@@ -287,9 +287,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       child: Container(
                                         padding: const EdgeInsets.all(8),
                                         child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
+                                            // Container untuk gambar
                                             Container(
                                               width: 80,
                                               height: 80,
@@ -307,8 +306,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               ),
                                             ),
                                             const SizedBox(width: 16),
+                                            // Expanded untuk mengisi sisa ruang di Row
                                             Expanded(
                                               child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
@@ -329,7 +331,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               ),
                                             ),
                                             const SizedBox(width: 16),
+                                            // Column untuk ikon edit dan hapus
                                             Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.end,
                                               children: [

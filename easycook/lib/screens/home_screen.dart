@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 child: Column(
                   children: [
+                    const SizedBox(height: 15),
                     SafeArea(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                                             .profilePictureUrl!)
                                         as ImageProvider<Object>
                                     : const AssetImage('assets/exProf.jpg'),
-                            radius: 25,
+                            radius: 40,
                           ),
                           FutureBuilder<String>(
                             future: _firebaseService.getUserName(),
@@ -104,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                                 return Text(
                                   'Hallo, $userName',
                                   style: const TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 25,
                                       fontWeight: FontWeight.bold),
                                 );
                               }
@@ -120,35 +121,14 @@ class _HomePageState extends State<HomePage> {
                             },
                             icon: const Icon(
                               Icons.chat,
-                              size: 24.0,
+                              size: 30.0,
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    ), // Spasi antara avatar dan search bar
                     const SizedBox(
-                        height: 20), // Spasi antara avatar dan search bar
-                    TextFormField(
-                      controller: searchController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
-                          ),
-                        ),
-                        labelText: "Cari Resep",
-                        prefixIcon: Icon(
-                          Icons.search,
-                          size: 24.0,
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 12.0,
-                          horizontal: 5.0,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                        height: 20), // Adding space between search bar and card
+                        height: 35), // Adding space between search bar and card
                     SizedBox(
                       height: 200, // Set the height of the banner
                       child: SizedBox(
@@ -224,30 +204,18 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height:
+                          30, // Increase this value to push the heading lower
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Text(
                             'Resep Terbaru',
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 20),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const MainScreen()),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.arrow_right_alt_outlined,
-                              size: 40.0,
-                            ),
                           ),
                         ],
                       ),

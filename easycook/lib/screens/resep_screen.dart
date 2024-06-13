@@ -172,7 +172,7 @@ class _ResepState extends State<Resep> {
                                           },
                                         ),
                                         Text(
-                                          '$likes   ',
+                                          '$likes    ',
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
