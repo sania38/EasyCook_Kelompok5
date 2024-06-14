@@ -56,11 +56,9 @@ class _HomePageState extends State<HomePage> {
             left: 0,
             right: 0,
             child: Container(
-              height: MediaQuery.of(context).size.height *
-                  0.2, // Set 1/4 bagian atas layar
+              height: MediaQuery.of(context).size.height * 0.2,
               decoration: const BoxDecoration(
-                color: Color(
-                    0xFFFFFF99), // Ganti dengan warna latar belakang yang Anda inginkan
+                color: Color(0xFFFFFF99),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30.0),
                   bottomRight: Radius.circular(30.0),
@@ -126,26 +124,22 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                    ), // Spasi antara avatar dan search bar
-                    const SizedBox(
-                        height: 35), // Adding space between search bar and card
+                    ),
+                    const SizedBox(height: 35),
                     SizedBox(
-                      height: 200, // Set the height of the banner
+                      height: 200,
                       child: SizedBox(
-                        height: 200, // Set the height of the banner
+                        height: 200,
                         child: CarouselSlider(
                           options: CarouselOptions(
-                            autoPlay: true, // Set auto play to true
-                            aspectRatio:
-                                2.0, // Set the aspect ratio of the banner items
-                            enlargeCenterPage: true, // Enlarge center item
+                            autoPlay: true,
+                            aspectRatio: 2.0,
+                            enlargeCenterPage: true,
                           ),
                           items: [
-                            // Add your banner items here
                             Container(
-                              width: 300, // Set the width of each banner item
-                              margin: const EdgeInsets.only(
-                                  right: 10), // Add margin between items
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(12.0),
@@ -167,9 +161,8 @@ class _HomePageState extends State<HomePage> {
                                   Radius.circular(12.0),
                                 ),
                               ),
-                              width: 300, // Set the width of each banner item
-                              margin: const EdgeInsets.only(
-                                  right: 10), // Add margin between items
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
                                 child: Image.asset(
@@ -186,9 +179,8 @@ class _HomePageState extends State<HomePage> {
                                   Radius.circular(12.0),
                                 ),
                               ),
-                              width: 300, // Set the width of each banner item
-                              margin: const EdgeInsets.only(
-                                  right: 10), // Add margin between items
+                              width: 300,
+                              margin: const EdgeInsets.only(right: 10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12.0),
                                 child: Image.asset(
@@ -204,8 +196,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(
-                      height:
-                          30, // Increase this value to push the heading lower
+                      height: 30,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 5.0),
@@ -225,11 +216,11 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator(); // Tampilkan loading indicator
+                          return const CircularProgressIndicator(); //loading indicator
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
-                          // Filter resep berdasarkan kata kunci pencarian
+                          //Filter resep
                           List<Recipe> filteredResep =
                               snapshot.data!.where((resep) {
                             return resep.name
@@ -237,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                                 .contains(_searchKeyword);
                           }).toList();
 
-                          // Tampilkan data resep menggunakan GridView.builder
+                          //Data resep menggunakan GridView.builder
                           filteredResep.sort(
                               (a, b) => b.createdAt.compareTo(a.createdAt));
 
@@ -262,11 +253,11 @@ class _HomePageState extends State<HomePage> {
                                 builder: (context, userSnapshot) {
                                   if (userSnapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const CircularProgressIndicator(); // Tampilkan loading indicator
+                                    return const CircularProgressIndicator(); //loading indicator
                                   } else if (userSnapshot.hasError) {
                                     return Text('Error: ${userSnapshot.error}');
                                   } else {
-                                    // Tampilkan data resep menggunakan RecipeCard
+                                    //Data resep
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.push(

@@ -53,8 +53,7 @@ class LikedScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    Resep(resepId: recipe.id), // Corrected here
+                                builder: (context) => Resep(resepId: recipe.id),
                               ),
                             );
                           },
@@ -74,7 +73,8 @@ class LikedScreen extends StatelessWidget {
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             padding: const EdgeInsets.all(8),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
                                   width: 80,
@@ -94,6 +94,7 @@ class LikedScreen extends StatelessWidget {
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -115,9 +116,7 @@ class LikedScreen extends StatelessWidget {
                                 const SizedBox(width: 16),
                                 const Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    // Tambahkan ikon untuk mengedit atau menghapus resep jika diperlukan
-                                  ],
+                                  children: [],
                                 ),
                               ],
                             ),

@@ -79,7 +79,6 @@ class _AiChatState extends State<AiChat> {
         children: [
           Expanded(
             child: ListView.builder(
-              // reverse: true, // Tetapkan reverse ke true di sini
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
