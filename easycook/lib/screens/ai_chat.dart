@@ -30,7 +30,6 @@ class _AiChatState extends State<AiChat> {
 
       _controller.clear();
 
-      // Menambahkan pesan rekomendasi di bawah pesan pengguna
       _getRecommendations();
     }
   }
@@ -80,7 +79,6 @@ class _AiChatState extends State<AiChat> {
         children: [
           Expanded(
             child: ListView.builder(
-              // reverse: true, // Tetapkan reverse ke true di sini
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
@@ -104,7 +102,7 @@ class _AiChatState extends State<AiChat> {
                     controller: _controller,
                     maxLines: null,
                     decoration: const InputDecoration(
-                      hintText: 'cari rekomendasi masakan dengen AI',
+                      hintText: 'Cari Rekomendasi Masakan dengan AI',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
                           Radius.circular(12.0),

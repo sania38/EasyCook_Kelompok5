@@ -309,4 +309,162 @@ class FirebaseService {
       throw Exception('Failed to upload profile image');
     }
   }
+
+  Future<void> updateLikesAndBookmarks(String resepId, int likes,
+      bool isBookmarked, List<String> likedUserIds) async {
+    try {
+      await _firestore.collection('resep').doc(resepId).update({
+        'likes': likes,
+        'is_bookmarked': isBookmarked,
+        // Update the 'liked_user_ids' field with the likedUserIds list
+        'liked_user_ids': likedUserIds,
+      });
+    } catch (e) {
+      print('Error updating likes and bookmarks: $e');
+      throw Exception('Failed to update likes and bookmarks');
+    }
+  }
+
+  Future<Map<String, dynamic>> getLikesAndBookmarks(String resepId) async {
+    try {
+      DocumentSnapshot docSnapshot =
+          await _firestore.collection('resep').doc(resepId).get();
+
+      if (!docSnapshot.exists) {
+        await _firestore.collection('resep').doc(resepId).set({
+          'likes': 0,
+          'is_bookmarked': false,
+          'liked_user_ids':
+              [], // Tambahkan field baru untuk menyimpan ID pengguna yang melakukan like
+        });
+      } else {
+        Map<String, dynamic>? data =
+            docSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          if (!data.containsKey('likes')) {
+            await _firestore
+                .collection('resep')
+                .doc(resepId)
+                .update({'likes': 0});
+          }
+          if (!data.containsKey('is_bookmarked')) {
+            await _firestore
+                .collection('resep')
+                .doc(resepId)
+                .update({'is_bookmarked': false});
+          }
+          if (!data.containsKey('liked_user_ids')) {
+            await _firestore
+                .collection('resep')
+                .doc(resepId)
+                .update({'liked_user_ids': []});
+          }
+        } else {
+          // Jika data null, tambahkan fields yang diperlukan
+          await _firestore.collection('resep').doc(resepId).update({
+            'likes': 0,
+            'is_bookmarked': false,
+            'liked_user_ids': [],
+          });
+        }
+      }
+
+      // Get the updated document
+      docSnapshot = await _firestore.collection('resep').doc(resepId).get();
+      int likes = (docSnapshot.data() as Map<String, dynamic>?)?['likes'] ?? 0;
+      bool isBookmarked =
+          (docSnapshot.data() as Map<String, dynamic>?)?['is_bookmarked'] ??
+              false;
+      List<String> likedUserIds = List<String>.from(
+          (docSnapshot.data() as Map<String, dynamic>?)?['liked_user_ids'] ??
+              []);
+
+      return {
+        'likes': likes,
+        'is_bookmarked': isBookmarked,
+        'liked_user_ids': likedUserIds,
+      };
+    } catch (e) {
+      print('Error getting likes and bookmarks: $e');
+      throw Exception('Failed to get likes and bookmarks');
+    }
+  }
+
+  Future<void> addLikedRecipe(String resepId, String userId) async {
+    try {
+      // Get reference to the user document
+      DocumentReference userDocRef = _firestore.collection('users').doc(userId);
+
+      // Update liked recipes field in user document
+      await userDocRef.set({
+        'liked_recipes': FieldValue.arrayUnion([resepId]),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('Error adding liked recipe: $e');
+      throw Exception('Failed to add liked recipe');
+    }
+  }
+
+  Future<void> removeLikedRecipe(String resepId, String userId) async {
+    try {
+      // Get reference to the user document
+      DocumentReference userDocRef = _firestore.collection('users').doc(userId);
+
+      // Update liked recipes field in user document to remove the liked recipe
+      await userDocRef.update({
+        'liked_recipes': FieldValue.arrayRemove([resepId]),
+      });
+    } catch (e) {
+      print('Error removing liked recipe: $e');
+      throw Exception('Failed to remove liked recipe');
+    }
+  }
+
+  Future<List<Recipe>> ambilResepDisukai(String userId) async {
+    try {
+      // Get the user's document
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        // Get the list of liked recipe IDs
+        List<String> likedRecipeIds =
+            List<String>.from(userDoc['liked_recipes'] ?? []);
+
+        // If there are no liked recipes, return an empty list
+        if (likedRecipeIds.isEmpty) {
+          return [];
+        }
+
+        // Get the liked recipes from the 'resep' collection
+        QuerySnapshot querySnapshot = await _firestore
+            .collection('resep')
+            .where(FieldPath.documentId, whereIn: likedRecipeIds)
+            .get();
+
+        // Map the documents to Recipe objects
+        List<Recipe> likedRecipes = querySnapshot.docs.map((doc) {
+          return Recipe(
+            id: doc.id,
+            name: doc['nama_masakan'],
+            description: doc['deskripsi'],
+            ingredients: List<String>.from(doc['bahan']),
+            cookingSteps: List<String>.from(doc['cara_memasak']),
+            imageURL: doc['foto_url'],
+            userId: doc['user_id'],
+            createdAt: (doc['created_at'] as Timestamp).toDate(),
+            profileName: '',
+          );
+        }).toList();
+
+        return likedRecipes;
+      } else {
+        // If the user document does not exist, return an empty list
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching liked recipes: $e');
+      throw Exception('Failed to fetch liked recipes');
+    }
+  }
 }

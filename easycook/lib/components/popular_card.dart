@@ -53,13 +53,15 @@ class PopularCard extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
               ),
             ),
             child: ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
               ),
               child: Image.network(
                 recipe.imageURL,
@@ -80,13 +82,17 @@ class PopularCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'Inter',
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 5),
                 Text(
                   recipe.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                  ),
                 ),
               ],
             ),

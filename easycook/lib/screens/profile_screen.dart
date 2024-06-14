@@ -26,7 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   final UserRepository _userRepository =
       UserRepository(FirebaseFirestore.instance);
 
-  late Future<List<Recipe>> _resepFuture;
+  // Initialize _resepFuture with an empty list
+  late Future<List<Recipe>> _resepFuture = Future.value([]);
   File? _image;
 
   @override
@@ -58,7 +59,6 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         await Provider.of<ProfileProvider>(context, listen: false)
             .uploadProfilePicture(_image!, _user!.uid);
-        ;
       }
     } catch (e) {
       print("Error picking image: $e");
@@ -213,12 +213,10 @@ class _ProfileScreenState extends State<ProfileScreen>
               "Resep Masakan Saya",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
             ),
-            Container(
-              height: 0,
+            Expanded(
+              // Use Expanded to let the ListView take the available space
               child: Center(
                 child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: FutureBuilder<List<Recipe>>(
                     future: _resepFuture,
@@ -246,7 +244,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                         );
                       } else {
                         return ListView.builder(
-                          shrinkWrap: true,
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             Recipe resep = snapshot.data![index];
@@ -290,9 +287,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       child: Container(
                                         padding: const EdgeInsets.all(8),
                                         child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
+                                            // Container untuk gambar
                                             Container(
                                               width: 80,
                                               height: 80,
@@ -310,8 +306,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               ),
                                             ),
                                             const SizedBox(width: 16),
+                                            // Expanded untuk mengisi sisa ruang di Row
                                             Expanded(
                                               child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
@@ -332,7 +331,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               ),
                                             ),
                                             const SizedBox(width: 16),
+                                            // Column untuk ikon edit dan hapus
                                             Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.end,
                                               children: [
